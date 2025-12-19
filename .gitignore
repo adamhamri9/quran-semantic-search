@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Generated data
+data/processed/
+data/embeddings/
+*.npy
+*.index
+*.faiss
+
+# Env
+.env
