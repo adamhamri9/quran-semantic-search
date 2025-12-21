@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 RAW_QURAN_PATH = Path("data/raw/quran-tanzil.txt")
-RAW_TAFSIR_PATH = Path("data/raw/ar_al-mukhtasar.json")
+RAW_TAFSIR_PATH = Path("data/raw/tafsir.json")
 OUTPUT_PATH = Path("data/processed/quran.json")
 
 
