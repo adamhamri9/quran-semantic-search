@@ -4,7 +4,7 @@ import sys
 import platform
 
 def run_command(command):
-    return subprocess.run(command, shell=True, check=True)
+    return subprocess.run(command, check=True)
 
 def main():
     print("--- Quran Semantic Search Setup ---")
@@ -12,8 +12,8 @@ def main():
     # 1. Create Virtual Environment
     if not os.path.exists("venv"):
         print("Creating virtual environment...")
-        run_command(f"{sys.executable} -m venv venv")
-
+    run_command([sys.executable, "-m", "venv", "venv"])
+    
     # 2. Determine pip path based on OS
     if platform.system() == "Windows":
         pip_path = os.path.join("venv", "Scripts", "pip")
@@ -24,7 +24,6 @@ def main():
 
     # 3. Install Requirements
     print("Installing dependencies...")
-    run_command(f"{pip_path} install --upgrade pip")
     run_command(f"{pip_path} install -r requirements.txt")
 
     # 4. Prepare Quran Data
