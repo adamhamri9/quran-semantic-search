@@ -45,3 +45,6 @@ def main():
     run_command(f"{python_executable} scripts/embed_translations.py {target_langs}")
 
     print("Setup completed successfully!")
+
+if __name__ == "__main__":
+    main()
