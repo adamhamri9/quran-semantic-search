@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -54,15 +55,21 @@ def process_file(trans_file, model):
     save_outputs(lang_code, embeddings, index)
 
 
-def main():
+def main(target_langs=None):
     if not PROCESSED_TRANS_DIR.exists():
         return
 
     model = SentenceTransformer(MODEL_NAME)
     
     for trans_file in PROCESSED_TRANS_DIR.glob("*.json"):
+        lang_code = trans_file.name.split('_')[0]
+        
+        if target_langs and lang_code not in target_langs:
+            continue
+        
         process_file(trans_file, model)
 
 
 if __name__ == "__main__":
-    main()
+    args = sys.argv[1:]
+    main(target_langs=args if args else None)
