@@ -1,18 +1,12 @@
 import json
 import sys
-from pathlib import Path
-
+from config import Config
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
 
-PROCESSED_TRANS_DIR = Path("data/processed/translations")
-OUTPUT_DIR = Path("data/embeddings/translations")
-
-MODEL_NAME = "intfloat/multilingual-e5-base"
-BATCH_SIZE = 32
-NORMALIZE = True
-
+PROCESSED_TRANS_DIR = Config.PROCESSED_TRANS_DIR
+OUTPUT_DIR = Config.TRANS_EMBEDDINGS_DIR
 
 def load_embedding_texts(trans_file):
     data = json.loads(trans_file.read_text(encoding="utf-8"))
@@ -23,9 +17,9 @@ def load_embedding_texts(trans_file):
 def build_embeddings(texts, model):
     embeddings = model.encode(
         texts,
-        batch_size=BATCH_SIZE,
+        batch_size=Config.BATCH_SIZE,
         convert_to_numpy=True,
-        normalize_embeddings=NORMALIZE,
+        normalize_embeddings=Config.NORMALIZE,
         show_progress_bar=True
     )
     return embeddings
@@ -59,14 +53,13 @@ def main(target_langs=None):
     if not PROCESSED_TRANS_DIR.exists():
         return
 
-    model = SentenceTransformer(MODEL_NAME)
+    model = SentenceTransformer(Config.MODEL_NAME)
     
     for trans_file in PROCESSED_TRANS_DIR.glob("*.json"):
         lang_code = trans_file.name.split('_')[0]
         
         if target_langs and lang_code not in target_langs:
             continue
-        
         process_file(trans_file, model)
 
 

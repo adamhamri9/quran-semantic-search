@@ -1,9 +1,9 @@
 import json
-from pathlib import Path
+from config import Config
 
-RAW_TRANSLATIONS_DIR = Path("data/raw/translations")
-RAW_TAFSIR_DIR = Path("data/raw/tafsir")
-OUTPUT_DIR = Path("data/processed/translations")
+RAW_TRANSLATIONS_DIR = Config.RAW_TRANSLATIONS_DIR
+RAW_TAFSIR_DIR = Config.RAW_TAFSIR_DIR
+OUTPUT_DIR = Config.PROCESSED_TRANS_DIR
 
 def get_tafsir_data(lang_code):
     for tafsir_file in RAW_TAFSIR_DIR.glob(f"{lang_code}_*.json"):

@@ -1,9 +1,9 @@
 import json
-from pathlib import Path
+from config import Config
 
-RAW_QURAN_PATH = Path("data/raw/quran-tanzil.txt")
-RAW_TAFSIR_PATH = Path("data/raw/tafsir/ar_mukhtasar.json")
-OUTPUT_PATH = Path("data/processed/quran.json")
+RAW_QURAN_PATH = Config.RAW_QURAN_PATH
+RAW_TAFSIR_PATH = Config.RAW_TAFSIR_DIR / "ar_mukhtasar.json"
+OUTPUT_PATH = Config.PROCESSED_QURAN_FILE
 
 def parse_tanzil_line(line: str):
     line = line.strip()

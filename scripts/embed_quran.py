@@ -1,21 +1,12 @@
 import json
-from pathlib import Path
-
+from logging import config
+from config import Config
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
 
-
-QURAN_PATH = Path("data/processed/quran.json")
-OUTPUT_DIR = Path("data/embeddings")
-
-MODEL_NAME = "intfloat/multilingual-e5-base"
-BATCH_SIZE = 32
-NORMALIZE = True
-
-FAISS_INDEX_NAME = "quran.faiss"
-EMBEDDINGS_NAME = "quran.npy"
-
+QURAN_PATH = Config.PROCESSED_QURAN_FILE
+OUTPUT_DIR = Config.EMBEDDINGS_DIR
 
 def load_embedding_texts():
     quran = json.loads(QURAN_PATH.read_text(encoding="utf-8"))
@@ -24,12 +15,12 @@ def load_embedding_texts():
 
 
 def build_embeddings(texts):
-    model = SentenceTransformer(MODEL_NAME)
+    model = SentenceTransformer(Config.MODEL_NAME)
     embeddings = model.encode(
         texts,
-        batch_size=BATCH_SIZE,
+        batch_size=Config.BATCH_SIZE,
         convert_to_numpy=True,
-        normalize_embeddings=NORMALIZE,
+        normalize_embeddings=Config.NORMALIZE,
         show_progress_bar=True
     )
     return embeddings
@@ -44,8 +35,8 @@ def build_faiss_index(embeddings):
 
 def save_outputs(embeddings, index):
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    np.save(OUTPUT_DIR / EMBEDDINGS_NAME, embeddings)
-    faiss.write_index(index, str(OUTPUT_DIR / FAISS_INDEX_NAME))
+    np.save(Config.EMBEDDINGS_FILE_PATH, embeddings)
+    faiss.write_index(index, str(Config.FAISS_INDEX_PATH))
 
 
 def main():
