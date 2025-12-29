@@ -6,8 +6,8 @@ from config import Config
 def get_supported_languages():
     languages = {"auto": "auto", "ar": "ar"}
     
-    if Config.PROCESSED_TRANSLATIONS_DIR.exists():
-        for file in Config.PROCESSED_TRANSLATIONS_DIR.glob("*.json"):
+    if Config.PROCESSED_TRANS_DIR.exists():
+        for file in Config.PROCESSED_TRANS_DIR.glob("*.json"):
             lang_code = file.stem.split('_')[0]
             languages[lang_code] = lang_code
             
@@ -19,9 +19,9 @@ SupportedLanguage = get_supported_languages()
 class SearchSettings(BaseModel):
     include_text: bool = Field(True, description="Include the original Arabic verse text")
     include_translation: bool = Field(True, description="Include the translation for the detected or specified language")
-    translation_lang: SupportedLanguage = Field(SupportedLanguage.AUTO, description="Language code or 'auto' for automatic detection")
+    translation_lang: SupportedLanguage = Field(SupportedLanguage.auto, description="Language code or 'auto' for automatic detection")
     include_tafsir: bool = Field(True, description="Include the Arabic tafsir (Al-Mukhtasar)")
-    tafsir_lang: SupportedLanguage = Field(SupportedLanguage.AUTO, description="Language code or 'auto' for automatic detection")
+    tafsir_lang: SupportedLanguage = Field(SupportedLanguage.auto, description="Language code or 'auto' for automatic detection")
 
 class ExpansionSettings(BaseModel):
     force_query_expansion: bool = Field(False, description="Enable query expansion using synonyms/local embeddings")
