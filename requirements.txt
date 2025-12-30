@@ -1,3 +1,5 @@
 fastapi
 faiss-cpu
 sentence-transformers
+langdetect
+uvicorn[standard]
