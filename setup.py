@@ -50,7 +50,8 @@ def main():
         [str(python_executable), "-m", "scripts.embed_translations", target_langs]
     )
 
-    print("Setup completed successfully!")
+    print("Setup completed successfully! you can now run the API using:")
+    print(f"uvicorn api.main:app")
 
 
 if __name__ == "__main__":
