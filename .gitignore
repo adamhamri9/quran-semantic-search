@@ -219,3 +219,5 @@ __marimo__/
 data/processed/
 data/embeddings/
 
+# Logs
+*.log
