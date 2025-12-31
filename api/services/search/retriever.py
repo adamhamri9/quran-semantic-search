@@ -181,7 +181,3 @@ class QuranRetriever:
             detected_lang=detected_lang,
             results=results
         )
-    
-if __name__ == "__main__":
-    qr = QuranRetriever()
-    print(asyncio.run(qr.search(SearchInput(query="mercy", top_k=5))))
