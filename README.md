@@ -1,129 +1,123 @@
-# Quran Semantic Search API  
-**Educational & Engineering-Focused Project**
+# Quran Semantic Search API
 
-🚧 **Status:** Work in Progress (Learning Project / Functional MVP)
+🚧 Status: Work in Progress (Learning Project / Functional MVP)
 
 ---
 
 ## Overview
+Quran Semantic Search API implements **meaning-based semantic retrieval** over Qur'anic text using vector embeddings.  
+The system is designed to handle **multilingual queries** while prioritizing **accuracy and context preservation** at the ayah level.
 
-This project explores how **semantic search** can be applied to the Qur'an by retrieving verses based on **meaning rather than keywords**.
+Key design principles:
 
-It combines:
-- Original Qur'anic text
-- Translations
-- Tafsir
-- Multilingual embeddings
-- FAISS-based similarity search
-
-The API is designed primarily for **learning and experimentation**, while maintaining clean architecture and sound engineering practices.
+- **Arabic-first retrieval** for all queries to maximize semantic fidelity.
+- **Controlled fallback** to target language indices only when confidence scores are low.
+- Explicit separation of indexing, retrieval, and ranking stages to simplify experimentation and maintain modularity.
+- System favors **correctness and reproducibility** over recall or flashy optimizations.
 
 ---
 
 ## Goals
-
-- Understand how semantic embeddings work in NLP
-- Experiment with multilingual semantic search
-- Design a scalable retrieval pipeline using FAISS
-- Serve semantic search results through a clean FastAPI interface
+- Understand and implement multilingual semantic embeddings for NLP.
+- Explore semantic search with FAISS and assess retrieval quality across languages.
+- Design a modular and scalable retrieval pipeline.
+- Serve clean, consistent API responses via FastAPI.
 
 ---
 
 ## Core Features
-
-- Semantic search over Qur'anic verses
-- Arabic-first retrieval with multilingual fallback
-- Separate FAISS indices per language
-- Optional inclusion of:
-  - Ayah text
-  - Translation
-  - Tafsir
-- Async search pipeline
-- Resource caching (indices, embeddings, translations)
-
----
-
-## Supported Languages
-
-- Arabic (primary)
-- English
-- French  
-- Indonesian
-- Turkish
-- Urdu
-- Additional languages can be embedded and indexed independently
+- Ayah-level semantic search across Qur'anic text.
+- **Arabic-first retrieval with multilingual fallback**:
+  - For English and French queries, Arabic index is used first due to better semantic quality.
+  - If final similarity score < 0.5, fallback to language-specific index.
+  - Other languages use their own index if available; otherwise fallback to Arabic index.
+- Separate FAISS indices per language.
+- Async search pipeline for scalable request handling.
+- Optional inclusion of ayah text, translation, and tafsir.
+- **Resource caching**:
+  - FAISS indices, embeddings, and translations.
+  - AI model used for embeddings is also cached for faster reuse.
+  - Original Qur'an verses are cached to reduce repeated I/O.
 
 ---
 
 ## Tech Stack
+- **Python** – orchestration, pipeline logic.
+- **FAISS** – similarity search with configurable index types.
+- **Sentence Transformers** – multilingual embedding generation.
+- **FastAPI** – async API layer with explicit request/response contracts.
 
-- **Python**
-- **FAISS** – vector similarity search
-- **Sentence Transformers** – multilingual embeddings
-- **FastAPI** – API layer
+---
+
+## Supported Languages
+- Arabic (primary)
+- English
+- French
+- Indonesian
+- Turkish
+- Urdu  
+Additional languages can be embedded and indexed independently.
 
 ---
 
 ## Data Sources
-
-- **Qur'an text:** Tanzil Project  
-- **Translations & Tafsir:** Tarteel QUL project
+- Qur'an text: [Tanzil Project](https://tanzil.net/docs/download/)
+- Translations & Tafsir: [Tarteel QUL Project](https://tarteel.io)
 
 ---
 
-## Design Notes
+## Design Decisions
+1. **Arabic-first retrieval for English/French queries**  
+   - Observed lower semantic quality when directly using non-Arabic indices.  
+   - Fallback mechanism ensures retrieval accuracy without discarding other languages.  
 
-- This project prioritizes **search quality and clarity of results**
-- Query expansion is intentionally **deferred** and planned for a separate experimental branch
-- The current retrieval quality is considered strong without expansion
+2. **Fallback strategy for missing language indices**  
+   - Queries in unsupported languages default to Arabic index using a dictionary mapping.  
+   - Ensures functional retrieval without building every language index upfront.
+
+3. **Deferred query expansion**  
+    - Postponed to preserve retrieval quality and because of limited personal time.
+    - See [Issue #2](https://github.com/adamhamri9/quran-semantic-search/issues/2).
+
+4. **Context Note (planned feature)**  
+   - Adds contextual ayah references alongside main results.  
+   - See [Issue #1](https://github.com/adamhamri9/quran-semantic-search/issues/1).
 
 ---
 
 ## Running the Project
 
-### 1. Clone the repository
-
+1. **Clone the repository**
 ```bash
 git clone https://github.com/adamhamri9/quran-semantic-search
 cd quran-semantic-search
 ````
 
-### 2. Run the setup script
-
-This script will:
-
-* Create a virtual environment
-* Install all required dependencies
-* Prepare Qur'an and translation data
-* Generate embeddings and FAISS indices
+2. **Run the setup script**
 
 ```bash
 python setup.py
 ```
 
-⚠️ **Important notes:**
+* Creates virtual environment.
+* Installs all dependencies.
+* Prepares Qur'an and translation data.
+* Generates embeddings and FAISS indices.
+* Prompts for target language codes to avoid unnecessary resource usage.
 
-* The **initial setup may take some time**, especially during the embedding generation step, depending on your hardware.
-* After embedding the **original Arabic Qur'an text**, the setup script will **prompt you to enter target language codes**.
+⚠️ Note: Embedding generation may take time depending on hardware.
 
-  * This allows you to generate embeddings **only for the languages you need**.
-  * It helps avoid unnecessary resource usage if you only want a single language (e.g. `en`) instead of all supported languages.
-
-### 3. Start the API
+3. **Start the API**
 
 ```bash
 uvicorn api.main:app
 ```
 
-The API will be available at:
-
-```
-http://127.0.0.1:8000
-```
+* Available at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ---
 
 ## Disclaimer
 
-⚠️ This is an educational project.  
-While the architecture is carefully designed, the API is **not intended for production use**.
+⚠️ This project is for **educational and experimental purposes**.
+Architecture is carefully designed, but the API is **not production-ready**.
