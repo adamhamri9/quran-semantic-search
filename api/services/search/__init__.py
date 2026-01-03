@@ -1,3 +1,5 @@
-from .retriever import QuranRetriever
+from .service import search
 
-__annotations__ = ["QuranRetriever"]
+__annotations__ = {
+    "search": search,
+}

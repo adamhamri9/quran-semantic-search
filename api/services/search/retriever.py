@@ -10,8 +10,8 @@ import asyncio
 from typing import List
 
 from config import Config
-from api.schemas.search_input import SearchInput, SearchSettings
-from api.schemas.search_response import SearchResponse, SearchResult
+from api.schemas.search_input import SearchInput
+from api.schemas.search_response import SearchResult
 
 DetectorFactory.seed = 0
 logger = logging.getLogger("quran_retriever")
@@ -100,7 +100,7 @@ class QuranRetriever:
             return f"{field} not found"
         return item.get(field) if isinstance(item, dict) else item
 
-    async def _search_with_index_async(self, params: SearchInput, index) -> List[SearchResult]:
+    async def _search_with_index(self, params: SearchInput, index) -> List[SearchResult]:
         try:
             start_time = time.time()
             query_vector = self._get_query_embedding(params.query)
@@ -142,42 +142,4 @@ class QuranRetriever:
 
         except Exception as e:
             logger.error(f"Error during search for query '{params.query}': {e}")
-            return []  # return empty list instead of crashing
-
-    async def search(self, params: SearchInput) -> SearchResponse:
-        # Detect language
-        try:
-            detected_lang = detect(params.query)
-        except Exception:
-            detected_lang = "en"
-
-        # Set auto languages
-        if params.settings.translation_lang == "auto":
-            params.settings.translation_lang = detected_lang
-        if params.settings.tafsir_lang == "auto":
-            params.settings.tafsir_lang = detected_lang
-
-        primary_lang = params.settings.translation_lang
-        use_arabic_first = primary_lang in ["en", "fr"]
-
-        # Load initial index
-        index = self._get_resource("ar" if use_arabic_first else primary_lang, "index")
-        if not index:
-            index = self._get_resource("ar", "index")
-
-        # Perform async search
-        results = await self._search_with_index_async(params, index)
-
-        # Fallback if avg score low
-        if use_arabic_first:
-            avg_score = sum(r.score for r in results) / max(len(results), 1)
-            if avg_score < 0.5:
-                index_fb = self._get_resource(primary_lang, "index")
-                if index_fb:
-                    results = await self._search_with_index_async(params, index_fb)
-
-        return SearchResponse(
-            query=params.query,
-            detected_lang=detected_lang,
-            results=results
-        )
+            return [] 
