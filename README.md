@@ -33,6 +33,8 @@ Key design principles:
   - Other languages use their own index if available; otherwise fallback to Arabic index.
 - Separate FAISS indices per language.
 - Async search pipeline for scalable request handling.
+- **Interactive API Documentation** via Scalar.
+- **Context Links**: Semantic linking of related verses within a local window (±10 ayahs) to provide "contextual continuity" beyond simple keyword matching.
 - Optional inclusion of ayah text, translation, and tafsir.
 - **Resource caching**:
   - FAISS indices, embeddings, and translations.
@@ -60,6 +62,36 @@ Additional languages can be embedded and indexed independently.
 
 ---
 
+## Project Structure
+
+A detailed breakdown of the project's directory layout:
+
+```text
+.
+├── api/                            # Application Interface & Logic
+│   ├── main.py                     # FastAPI entry point & route definitions
+│   ├── schemas/                    # Pydantic models for request/response validation
+│   └── services/                   # Core business logic
+│       └── search/
+│           ├── retriever.py        # Handles FAISS index loading & vector search
+│           ├── context.py          # Builds semantic context links between ayahs
+│           └── service.py          # Orchestrates search & context building
+├── data/                           # Data Storage (Git-ignored large files)
+│   ├── raw/                        # Original source files (Tanzil Quran, translations)
+│   ├── processed/                  # Normalized JSON data ready for embedding
+│   └── embeddings/                 # Generated FAISS indices & pickle files
+├── scripts/                        # ETL Data Pipeline Scripts
+│   ├── prepare_quran.py            # Cleans & structures raw Quran text
+│   ├── prepare_translations.py     # Aligns translations with Arabic text
+│   ├── embed_quran.py              # Generates vector embeddings for Arabic
+│   └── embed_translations.py       # Generates embeddings for other languages
+├── config.py                       # Centralized configuration (Paths, Constants)
+├── setup.py                        # Automated setup script (Runs full pipeline)
+└── requirements.txt                # Python dependencies
+```
+
+---
+
 ## Data Sources
 - Qur'an text: [Tanzil Project](https://tanzil.net/docs/download/)
 - Translations & Tafsir: [Tarteel QUL Project](https://tarteel.io)
@@ -79,8 +111,9 @@ Additional languages can be embedded and indexed independently.
     - Postponed to preserve retrieval quality and because of limited personal time.
     - See [Issue #2](https://github.com/adamhamri9/quran-semantic-search/issues/2).
 
-4. **Context Note (planned feature)**  
-   - Adds contextual ayah references alongside main results.  
+4. **Context Links**  
+   - Dynamically links semantically related verses within a surrounding window.
+   - Solves the issue of isolated results by suggesting relevant neighboring ayahs.
    - See [Issue #1](https://github.com/adamhamri9/quran-semantic-search/issues/1).
 
 ---
@@ -113,7 +146,8 @@ python setup.py
 uvicorn api.main:app
 ```
 
-* Available at [http://127.0.0.1:8000](http://127.0.0.1:8000)
+* **API Endpoint**: [http://127.0.0.1:8000/search](http://127.0.0.1:8000/search)
+* **Interactive Docs**: [http://127.0.0.1:8000/scalar](http://127.0.0.1:8000/scalar)
 
 ---
 
