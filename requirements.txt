@@ -1,5 +1,7 @@
 fastapi
-faiss-cpu
-sentence-transformers
-langdetect
 uvicorn[standard]
+scalar-fastapi
+sentence-transformers
+faiss-cpu
+langdetect
+numpy
